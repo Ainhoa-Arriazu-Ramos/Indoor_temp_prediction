@@ -1,8 +1,12 @@
+#IMPORTAR DATASET=======================================================================================================
+
 dataset_tem_hourly <- Tipología11_Temp_int_hourly
 rm(Tipología11_Temp_int_hourly)
 
 
 dataset_tem_daily  <- dataset_tem_hourly
+
+#MODIFICACIONES EN EL DATASET =========================================================================================
 
 #Agrupar por días y promedio del resto de variables
 
@@ -23,16 +27,18 @@ dataset_tem_daily   <-  dataset_tem_daily_avg
 rm(dataset_tem_daily_avg)
 
 
+
 #Borrar columnas/variables del dataset diario
 dataset_tem_daily <- dataset_tem_daily %>%
   select(-Indoor_PB_Temp, -Indoor_P1_Temp, -Indoor_P2_Temp)
+
 
 #Renombrar la columna de indoor temperature
 dataset_tem_daily <- dataset_tem_daily %>%
   rename(Temp = Indoor_P3_Temp)
 
 
-#Crear el dataset desplazado
+#Crear el dataset desplazado=====================
 
 #Copiamoos el dataset (por si acaso)
 dataset_tem_daily_ARX  <- dataset_tem_daily
@@ -86,8 +92,12 @@ modelo <- lm(Temp~ Outdoor_Temperature + Outdoor_GlobRadiation +
                Out_temp_1 + Out_temp_2 + Out_temp_3, 
              data = dataset_tem_daily_ARX)
 
+
+
 # Mostrar el resumen del modelo
 summary(modelo)
+
+
 
 #Gráficos
 par(mfrow=c(2,2))  # Organiza los gráficos en 2x2
