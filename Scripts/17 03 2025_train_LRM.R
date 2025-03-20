@@ -27,39 +27,51 @@ summary(modelo_lr)
 
 
 # Hacer predicciones con el conjunto de prueba
-predicciones <- predict(modelo_lr, newdata = test_data)
+predicciones_lr <- predict(modelo_lr, newdata = test_data)
 
 
 # Ver las primeras predicciones
-head(predicciones)
+head(predicciones_lr)
 
 
-# Valores reales
-valores_reales <- train_data$Temp
+# Valores reales (soin los valores reales de temperatura del subdataset test)
+valores_reales_lr <- test_data$Temp
 
 
-# Calcular residuos
-residuos <- valores_reales - predicciones
+# Calcular residuos (diferencia entre valores reales y las predicciones)
+residuos_lr <- valores_reales_lr - predicciones_lr
 
 
 # Calcular métricas de error
-mse <- mean(residuos^2)         # Error Cuadrático Medio (MSE)
-rmse <- sqrt(mse)               # Raíz del Error Cuadrático Medio (RMSE)
-mae <- mean(abs(residuos))      # Error Absoluto Medio (MAE)
+mse_lr <- mean(residuos_lr^2)         # Error Cuadrático Medio (MSE)
+rmse_lr <- sqrt(mse_lr)               # Raíz del Error Cuadrático Medio (RMSE)
+mae_lr <- mean(abs(residuos_lr))      # Error Absoluto Medio (MAE)
 
 
 # Imprimir resultados
-cat("MSE:", mse, "\n")
-cat("RMSE:", rmse, "\n")
-cat("MAE:", mae, "\n")
+cat("MSE:", mse_lr, "\n")
+cat("RMSE:", rmse_lr, "\n")
+cat("MAE:", mae_lr, "\n")
 
 
 # Graficar predicciones vs. valores reales
-plot(test_data$Temp, predicciones, main="Predicciones vs Valores Reales",
-     xlab="Valores Reales (Temperatura)", ylab="Predicciones (Temperatura)",
+plot(valores_reales_lr, predicciones_lr, 
+     main="Regresión lineal: Predicciones vs Valores Reales",
+     xlab="Valores Reales (Temperatura)", 
+     ylab="Predicciones (Temperatura)",
      pch=19, col="blue")
-abline(a=0, b=1, col="red", lwd=2)  # Línea de referencia
 
+# Agregar una línea de referencia (y = x) para ver el ajuste perfecto
+abline(a=0, b=1, col="red", lwd=2)  # Línea roja de referencia
+
+
+
+
+#Formatear tabla en word
+install.packages("sjPlot")
+library(sjPlot)
+
+tab_model(modelo_lr, file = "modelo_lr.doc")
 
 
 #2: RANDOM FOREST =======================================================================================================
@@ -93,16 +105,12 @@ varImpPlot(modelo_rf)  # Gráfico de importancia
 predicciones_rf <- predict(modelo_rf, newdata = test_data)
 
 
-# Ver las primeras predicciones
-head(predicciones_rf)
-
-
 # Valores reales
-valores_reales <- test_data$Temp  # Ahora tomamos los valores reales de test_data
+valores_reales_rf <- test_data$Temp  # Ahora tomamos los valores reales de test_data
 
 
 # Calcular residuos
-residuos_rf <- valores_reales - predicciones_rf
+residuos_rf <- valores_reales_rf - predicciones_rf
 
 
 # Calcular métricas de error
@@ -124,10 +132,9 @@ plot(test_data$Temp, predicciones_rf, main="Random Forest: Predicciones vs Valor
 abline(a=0, b=1, col="red", lwd=2)  # Línea de referencia
 
 
+#Para calcular el R2
 install.packages("caret")  # Solo si no lo tienes instalado
 library(caret)
 
-
-r2_caret <- R2(predicciones_rf, valores_reales)
+r2_caret <- R2(predicciones_rf, valores_reales_rf)
 cat("R² (Caret):", r2_caret, "\n")
-
