@@ -4,10 +4,10 @@
 
 #Copiar dataset
 viv_todo <- ClimateReady_10_min_interval
-#Borrar columnas no necesarias
-viv_todo <- viv_verano[, !(names(viv_verano) %in% c("tout", "co2", "tg", "ta2", "pm25"))]
 
 #Reordenar columnas
+#Borrar columnas no necesarias
+viv_todo <- viv_todo[, !(names(viv_todo) %in% c("tout", "co2", "tg", "ta2", "pm25"))]
 viv_todo <- viv_todo[, c("10_minute_interval", "year", "month", "day", "hour",
                              "city", "dwell_numb", "room", "dwelling", 
                              "ta1", "rh")]
@@ -35,12 +35,13 @@ viv_verano$Ext_T <- as.numeric(viv_verano$Ext_T)
 viv_verano$Ext_RAD <- as.numeric(viv_verano$Ext_RAD)
 
 #Rename
+library(dplyr)
 viv_verano <- viv_verano %>%
-  rename(Int_RH = Int_rh)
+  rename(Int_T = ta1)
 
 
 #Combinamos para sacar las variables horariamente
-library(dplyr)
+
 viv_verano_horario <- viv_verano %>%
   group_by(year, month, day, hour, dwell_numb) %>%
   summarise(
@@ -130,3 +131,16 @@ rmse_rf <- sqrt(mse_rf)
 r2_rf <- 1 - sum((real - pred_rf)^2) / sum((real - mean(real))^2)
 
 cat("Random Forest - RMSE:", rmse_rf, " | R²:", r2_rf, "\n")
+
+
+#GUARDAR EL DATASET EN EXCEL
+# Instala el paquete si no lo tienes
+install.packages("writexl")
+
+# Carga el paquete
+library(writexl)
+
+write_xlsx(viv_verano_diario, "C:/Users/ainhoa.arriazu/Desktop/DATASETs_para alarmas.xlsx")
+
+
+
